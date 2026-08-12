@@ -20,13 +20,15 @@ export async function GET(request: Request) {
     return NextResponse.json({
       balanced: ledger.isBalanced(),
       trialBalance: ledger.trialBalance(),
+      // Only accounts carrying a position. Filtering on the rendered string
+      // would miss "0.000000" and friends — compare the minor units instead.
       accounts: ledger
         .listAccounts()
+        .filter((account) => ledger.balance(account.id, account.currency) !== 0n)
         .map((account) => ({
           ...account,
           balance: fromMinor(ledger.balance(account.id, account.currency), account.currency),
-        }))
-        .filter((account) => account.balance !== "0" && account.balance !== "0.00"),
+        })),
       transactions: transactions.map((transaction) => ({
         id: transaction.id,
         reference: transaction.reference,
