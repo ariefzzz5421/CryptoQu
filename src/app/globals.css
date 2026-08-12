@@ -1,0 +1,383 @@
+@import "tailwindcss";
+
+/*
+ * CryptoQu design tokens.
+ *
+ * The palette is built around the two things the product joins: the warm red
+ * of Indonesian QR acceptance and the cool mint of on-chain settlement. A
+ * committed dark surface keeps long numeric tables readable and lets the
+ * accent carry meaning rather than decoration.
+ */
+@theme {
+  --color-ink-900: #06080c;
+  --color-ink-850: #090c12;
+  --color-ink-800: #0d1117;
+  --color-ink-700: #131924;
+  --color-ink-600: #1b2331;
+  --color-ink-500: #263145;
+
+  --color-line: #1e2836;
+  --color-line-strong: #2c3a4e;
+
+  --color-mist-100: #f3f6fb;
+  --color-mist-300: #c3ccdb;
+  --color-mist-500: #8b97ab;
+  --color-mist-600: #6b7789;
+
+  --color-flame-400: #ff7a5c;
+  --color-flame-500: #ff4d3d;
+  --color-flame-600: #e02f22;
+
+  --color-mint-300: #5cf5cd;
+  --color-mint-400: #00e5b0;
+  --color-mint-500: #00bf93;
+
+  --color-amber-warn: #ffb020;
+  --color-rose-bad: #ff5c7a;
+
+  --font-mono:
+    ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", "Roboto Mono", Menlo, monospace;
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Inter, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --grid: rgba(255, 255, 255, 0.028);
+  }
+
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-ink-900);
+    color: var(--color-mist-100);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+}
+
+/*
+ * Everything below is declared in the components layer so ordinary Tailwind
+ * utilities still win against it. Without the layer these rules would sit
+ * after the utilities in source order and quietly beat things like `md:hidden`
+ * on an element that also carries `.btn`.
+ */
+@layer components {
+
+/* The faint module grid behind the page — a nod to the QR the product decodes. */
+.page-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 100% 60% at 50% 0%, #000 30%, transparent 78%);
+}
+
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(52rem 26rem at 12% -8%, rgba(255, 77, 61, 0.18), transparent 65%),
+    radial-gradient(46rem 24rem at 88% 2%, rgba(0, 229, 176, 0.14), transparent 62%);
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+}
+
+/* Panels */
+.panel {
+  background: linear-gradient(180deg, rgba(19, 25, 36, 0.92), rgba(9, 12, 18, 0.92));
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+}
+
+.panel-flat {
+  background: var(--color-ink-850);
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+}
+
+.hairline {
+  border-top: 1px solid var(--color-line);
+}
+
+/* Text helpers */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-mist-500);
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/*
+ * Two saturated stops with a short blend between them, rather than a long ramp.
+ * A slow red-to-mint interpolation spends the middle of the headline in olive
+ * and washed peach — exactly where the largest words sit.
+ */
+.gradient-text {
+  background: linear-gradient(
+    102deg,
+    var(--color-flame-500) 0%,
+    var(--color-flame-400) 34%,
+    var(--color-mint-300) 62%,
+    var(--color-mint-300) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Controls */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 10px;
+  padding: 0.625rem 1.125rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition:
+    transform 0.12s ease,
+    background 0.16s ease,
+    border-color 0.16s ease,
+    opacity 0.16s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+/*
+ * A disabled button drops its accent entirely. Dimming a red gradient instead
+ * leaves a dark red slab that reads as an error rather than as "not yet".
+ */
+.btn:disabled {
+  background: var(--color-ink-700) !important;
+  border: 1px solid var(--color-line) !important;
+  color: var(--color-mist-600) !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(96deg, var(--color-flame-500), var(--color-flame-600));
+  color: #fff;
+  box-shadow: 0 6px 24px -10px rgba(255, 77, 61, 0.85);
+}
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(96deg, var(--color-flame-400), var(--color-flame-500));
+}
+
+.btn-mint {
+  background: linear-gradient(96deg, var(--color-mint-400), var(--color-mint-500));
+  color: #04120e;
+  box-shadow: 0 6px 24px -10px rgba(0, 229, 176, 0.8);
+}
+.btn-mint:hover:not(:disabled) {
+  background: linear-gradient(96deg, var(--color-mint-300), var(--color-mint-400));
+}
+
+.btn-ghost {
+  background: var(--color-ink-700);
+  border: 1px solid var(--color-line-strong);
+  color: var(--color-mist-100);
+}
+.btn-ghost:hover:not(:disabled) {
+  border-color: var(--color-mist-600);
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  background: var(--color-ink-900);
+  border: 1px solid var(--color-line-strong);
+  border-radius: 10px;
+  padding: 0.625rem 0.8125rem;
+  color: var(--color-mist-100);
+  font-size: 0.875rem;
+  transition: border-color 0.16s ease;
+}
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-mint-400);
+}
+.textarea {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  resize: vertical;
+  word-break: break-all;
+}
+.select {
+  appearance: none;
+  cursor: pointer;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 999px;
+  padding: 0.1875rem 0.625rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--color-line-strong);
+  background: var(--color-ink-700);
+  color: var(--color-mist-300);
+  white-space: nowrap;
+}
+.badge-mint {
+  border-color: rgba(0, 229, 176, 0.35);
+  background: rgba(0, 229, 176, 0.1);
+  color: var(--color-mint-300);
+}
+.badge-flame {
+  border-color: rgba(255, 77, 61, 0.35);
+  background: rgba(255, 77, 61, 0.1);
+  color: var(--color-flame-400);
+}
+.badge-warn {
+  border-color: rgba(255, 176, 32, 0.35);
+  background: rgba(255, 176, 32, 0.1);
+  color: var(--color-amber-warn);
+}
+.badge-bad {
+  border-color: rgba(255, 92, 122, 0.35);
+  background: rgba(255, 92, 122, 0.1);
+  color: var(--color-rose-bad);
+}
+
+/* Tables */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+.table th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-mist-600);
+  font-weight: 500;
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--color-line);
+}
+.table td {
+  padding: 0.6875rem 0.75rem;
+  border-bottom: 1px solid rgba(30, 40, 54, 0.6);
+  color: var(--color-mist-300);
+}
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Any wide content scrolls inside its own box, never the page. */
+.scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+} /* end @layer components */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ink-900);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-ink-600);
+  border-radius: 999px;
+  border: 2px solid var(--color-ink-900);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-ink-500);
+}
+
+/* Motion */
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 229, 176, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 229, 176, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 229, 176, 0);
+  }
+}
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--color-mint-400);
+  animation: pulse-ring 2.2s infinite;
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(320%);
+  }
+}
+.scan-sweep {
+  animation: sweep 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.4s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
